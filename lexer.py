@@ -17,6 +17,8 @@ class Lexer:
     return self.source[self.curr]
 
   def lookahead(self, n=1):
+    if self.curr >= len(self.source):
+      return '\0'
     return self.source[self.curr + n]
 
 
@@ -40,7 +42,7 @@ class Lexer:
       elif ch == '\t': pass
       elif ch == '\r': pass
       elif ch == '#':
-        while self.peek() != '\n':
+        while self.peek() != '\n' and not(self.curr >= len(self.source)):
           self.advance()
 
       if ch == '(':
@@ -98,6 +100,4 @@ class Lexer:
             self.add_token(TOK_ASSIGN)
           else:
             self.add_token(TOK_COLON)
-
-    ## TODO:: , :=
     return self.tokens
