@@ -75,5 +75,29 @@ class Lexer:
         self.add_token(TOK_QUESTION)
       elif ch == '%':
         self.add_token(TOK_MOD)
+      elif ch == '=':
+        if self.match('='):
+          self.add_token(TOK_EQ)
+      elif ch == '~':
+        if self.match('='):
+          self.add_token(TOK_NE)
+        else:
+          self.add_token(TOK_NOT)
+      elif ch == '<':
+        if self.match('='):
+          self.add_token(TOK_LE)
+        else:
+          self.add_token(TOK_LT)
+      elif ch == '>':
+          if self.match('='):
+            self.add_token(TOK_GE)
+          else:
+            self.add_token(TOK_GT)
+      elif ch == ':':
+          if self.match('='):
+            self.add_token(TOK_ASSIGN)
+          else:
+            self.add_token(TOK_COLON)
 
+    ## TODO:: , :=
     return self.tokens
