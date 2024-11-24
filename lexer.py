@@ -40,6 +40,25 @@ class Lexer:
     else:
       self.add_token(TOK_INTEGER)
 
+  def handle_string(self, start_quote):
+    while self.peek() != start_quote and not(self.curr >= len(self.source)):
+      self.advance()
+    if self.curr >= len(self.source):
+      raise SyntaxError(f'[Line {self.line}] Unterminated string.')
+    self.advance()
+    self.add_token(TOK_STRING)
+
+  def handle_identifier(self):
+    while self.peek().isalnum() or self.peek() == '_':
+      self.advance()
+    # Check if the identifier matches a key in the keywords dict
+    text = self.source[self.start:self.curr]
+    keyword_type = keywords.get(text)
+    if keyword_type == None:
+      self.add_token(TOK_IDENTIFIER)
+    else:
+      self.add_token(keyword_type)
+    self.add_token(TOK_IDENTIFIER)
 
   def add_token(self, token_type):
     self.tokens.append(Token(token_type, self.source[self.start:self.curr], self.line))
@@ -84,5 +103,8 @@ class Lexer:
         self.add_token(TOK_ASSIGN if self.match('=') else TOK_COLON)
       elif ch.isdigit():
         self.handle_number()
-      #TODO: handle_string() --> "something" or 'something'
+      elif ch == '"' or ch == '\'':
+        self.handle_string(ch)
+      elif ch.isalpha() or ch == '_':
+        self.handle_identifier()
     return self.tokens
