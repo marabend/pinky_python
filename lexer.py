@@ -14,6 +14,8 @@ class Lexer:
     return ch
 
   def peek(self):
+    if self.curr >= len(self.source):
+      return '\0'
     return self.source[self.curr]
 
   def lookahead(self, n=1):
@@ -45,7 +47,7 @@ class Lexer:
       self.advance()
     if self.curr >= len(self.source):
       raise SyntaxError(f'[Line {self.line}] Unterminated string.')
-    self.advance()
+    self.advance() # Consume the ending quote
     self.add_token(TOK_STRING)
 
   def handle_identifier(self):
@@ -58,7 +60,6 @@ class Lexer:
       self.add_token(TOK_IDENTIFIER)
     else:
       self.add_token(keyword_type)
-    self.add_token(TOK_IDENTIFIER)
 
   def add_token(self, token_type):
     self.tokens.append(Token(token_type, self.source[self.start:self.curr], self.line))
@@ -71,9 +72,6 @@ class Lexer:
       elif ch == ' ': pass
       elif ch == '\t': pass
       elif ch == '\r': pass
-      elif ch == '#':
-        while self.peek() != '\n' and not(self.curr >= len(self.source)):
-          self.advance()
       elif ch == '(': self.add_token(TOK_LPAREN)
       elif ch == ')': self.add_token(TOK_RPAREN)
       elif ch == '{': self.add_token(TOK_LCURLY)
@@ -83,13 +81,18 @@ class Lexer:
       elif ch == '.': self.add_token(TOK_DOT)
       elif ch == ',': self.add_token(TOK_COMMA)
       elif ch == '+': self.add_token(TOK_PLUS)
-      elif ch == '-': self.add_token(TOK_MINUS)
       elif ch == '*': self.add_token(TOK_STAR)
       elif ch == '^': self.add_token(TOK_CARET)
       elif ch == '/': self.add_token(TOK_SLASH)
       elif ch == ';': self.add_token(TOK_SEMICOLON)
       elif ch == '?': self.add_token(TOK_QUESTION)
       elif ch == '%': self.add_token(TOK_MOD)
+      elif ch == '-':
+        if self.match('-'):
+          while self.peek() != '\n' and not(self.curr >= len(self.source)):
+            self.advance()
+        else:
+          self.add_token(TOK_MINUS)
       elif ch == '=':
         if self.match('='):
           self.add_token(TOK_EQ)
@@ -101,10 +104,12 @@ class Lexer:
         self.add_token(TOK_GE if self.match('=') else TOK_GT)
       elif ch == ':':
         self.add_token(TOK_ASSIGN if self.match('=') else TOK_COLON)
-      elif ch.isdigit():
-        self.handle_number()
       elif ch == '"' or ch == '\'':
         self.handle_string(ch)
+      elif ch.isdigit():
+        self.handle_number()
       elif ch.isalpha() or ch == '_':
         self.handle_identifier()
+      else:
+        raise SyntaxError(f'[Line {self.line}] Error at {ch}: Unexpected character.')
     return self.tokens
