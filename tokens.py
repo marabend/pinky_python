@@ -27,7 +27,7 @@ TOK_EQ         = 'TOK_EQ'         #  =
 TOK_GE         = 'TOK_GE'         #  >=
 TOK_LE         = 'TOK_LE'         #  <=
 TOK_NE         = 'TOK_NE'         #  ~=
-TOK_EQEQ       = 'TOK_EQEQ'     #  ==
+TOK_EQEQ       = 'TOK_EQEQ'       #  ==
 TOK_ASSIGN     = 'TOK_ASSIGN'     #  :=
 TOK_GTGT       = 'TOK_GTGT'       #  >>
 TOK_LTLT       = 'TOK_LTLT'       #  <<
@@ -84,6 +84,5 @@ class Token:
     self.token_type = token_type
     self.lexeme = lexeme
     self.line = line
-
   def __repr__(self):
     return f'({self.token_type}, {self.lexeme!r}, {self.line})'
