@@ -1,6 +1,7 @@
 import sys
 from utils import *
 from tokens import *
+from interpreter import *
 from lexer import *
 from pinkyparser import *
 
@@ -29,3 +30,11 @@ if __name__ == '__main__':
     print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
     ast = Parser(tokens).parse()
     print_pretty_ast(ast)
+
+    print()
+    print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
+    print(f'{Colors.GREEN}INTERPRETER:{Colors.WHITE}')
+    print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
+    interpreter = Interpreter()
+    val = interpreter.interpret(ast)
+    print(val)
