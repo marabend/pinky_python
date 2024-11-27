@@ -1,4 +1,5 @@
 import sys
+from utils import *
 from tokens import *
 from lexer import *
 from pinkyparser import *
@@ -11,10 +12,20 @@ if __name__ == '__main__':
   with open(filename) as file:
     source = file.read()
 
-    print("LEXER:")
+    print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
+    print(f'{Colors.GREEN}SOURCE:{Colors.WHITE}')
+    print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
+    print(source)
+
+    print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
+    print(f'{Colors.GREEN}TOKENS:{Colors.WHITE}')
+    print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
     tokens = Lexer(source).tokenize()
     for tok in tokens: print(tok)
 
-    print("PARSED AST:")
+    print()
+    print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
+    print(f'{Colors.GREEN}AST:{Colors.WHITE}')
+    print(f'{Colors.GREEN}***************************************{Colors.WHITE}')
     ast = Parser(tokens).parse()
-    print(ast)
+    print_pretty_ast(ast)
