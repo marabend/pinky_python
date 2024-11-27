@@ -1,6 +1,7 @@
+from utils import *
 from tokens import *
 from model import *
-from utils import *
+
 class Parser:
   def __init__(self, tokens):
     self.tokens = tokens
@@ -46,7 +47,7 @@ class Parser:
     if self.match(TOK_LPAREN):
       expr = self.expr()
       if (not self.match(TOK_RPAREN)):
-         parse_error(f'Error: ")" expected.', self.previous_token().line)
+        parse_error(f'Error: ")" expected.', self.previous_token().line)
       else:
         return Grouping(expr, line=self.previous_token().line)
 
@@ -58,27 +59,26 @@ class Parser:
       return UnOp(op, operand, line=self.previous_token().line)
     return self.primary()
 
-  # <factor>  ::=  <unary>
-  def factor(self):
-    return self.unary()
-
-  # <term>  ::=  <factor> ( ('*'|'/') <factor> )*
-  def term(self):
-    expr = self.factor()
+  # <multiplication>  ::=  <unary> ( ('*'|'/') <unary> )*
+  def multiplication(self):
+    expr = self.unary()
     while self.match(TOK_STAR) or self.match(TOK_SLASH):
       op = self.previous_token()
-      right = self.factor()
+      right = self.unary()
+      expr = BinOp(op, expr, right, self.previous_token().line)
+    return expr
+
+  # <addition>  ::=  <multiplication> ( ('+'|'-') <multiplication> )*
+  def addition(self):
+    expr = self.multiplication()
+    while self.match(TOK_PLUS) or self.match(TOK_MINUS):
+      op = self.previous_token()
+      right = self.multiplication()
       expr = BinOp(op, expr, right, line=self.previous_token().line)
     return expr
 
-  # <expr>  ::=  <term> ( ('+'|'-') <term> )*
   def expr(self):
-    expr = self.term()
-    while self.match(TOK_PLUS) or self.match(TOK_MINUS):
-      op = self.previous_token()
-      right = self.term()
-      expr = BinOp(op, expr, right, line=self.previous_token().line)
-    return expr
+    return self.addition()
 
   def parse(self):
     ast = self.expr()
