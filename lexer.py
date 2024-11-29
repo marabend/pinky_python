@@ -1,5 +1,5 @@
-from tokens import *
 from utils import *
+from tokens import *
 
 class Lexer:
   def __init__(self, source):
@@ -47,7 +47,7 @@ class Lexer:
     while self.peek() != start_quote and not(self.curr >= len(self.source)):
       self.advance()
     if self.curr >= len(self.source):
-       lexing_error(f'Unterminated string.', self.line)
+      lexing_error(f'Unterminated string.', self.line)
     self.advance() # Consume the ending quote
     self.add_token(TOK_STRING)
 

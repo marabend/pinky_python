@@ -125,7 +125,7 @@ class Parser:
       expr = BinOp(op, expr, right, line=op.line)
     return expr
 
-  # <logical_and> ::= <equality> (
+  # <logical_and> ::= <equality> ( "and" <equality> )*
   def logical_and(self):
     expr = self.equality()
     while self.match(TOK_AND):

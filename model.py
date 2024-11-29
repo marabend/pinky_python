@@ -5,6 +5,7 @@ class Node:
   The parent class for every node in the AST
   '''
   pass
+
 class Expr(Node):
   '''
   Expressions evaluate to a result, like x + (3 * y) >= 6
@@ -42,6 +43,7 @@ class Float(Expr):
   def __repr__(self):
     return f'Float[{self.value}]'
 
+
 class Bool(Expr):
   '''
   Example: true, false
@@ -52,6 +54,7 @@ class Bool(Expr):
     self.line = line
   def __repr__(self):
     return f'Bool[{self.value}]'
+
 
 class String(Expr):
   '''
@@ -94,6 +97,7 @@ class BinOp(Expr):
   def __repr__(self):
     return f'BinOp({self.op.lexeme!r}, {self.left}, {self.right})'
 
+
 class LogicalOp(Expr):
   '''
   Example: x and y, x or y
@@ -106,9 +110,9 @@ class LogicalOp(Expr):
     self.left = left
     self.right = right
     self.line = line
-
   def __repr__(self):
-    return f'LogicalOp({self.op.lexeme!r}, {self.left}, {self.right}'
+    return f'LogicalOp({self.op.lexeme!r}, {self.left}, {self.right})'
+
 
 class Grouping(Expr):
   '''
@@ -131,11 +135,10 @@ def Assignment(Stmt):
   #TODO:
   pass
 
-def IfStmt(Stmn):
+def IfStmt(Stmt):
   #TODO:
   pass
 
-def ForStmt(Stmn):
+def ForStmt(Stmt):
   #TODO:
   pass
-

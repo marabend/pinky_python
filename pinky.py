@@ -1,9 +1,9 @@
 import sys
 from utils import *
 from tokens import *
-from interpreter import *
 from lexer import *
 from pinkyparser import *
+from interpreter import *
 
 if __name__ == '__main__':
   if len(sys.argv) != 2:
