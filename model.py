@@ -125,6 +125,19 @@ class Grouping(Expr):
   def __repr__(self):
     return f'Grouping({self.value})'
 
+class Stmts(Node):
+  '''
+  A list of statements
+  '''
+  def __init__(self, stmts, line):
+    assert all( isinstance(stmt, Stmt) for stmts in stmts), stmts
+    self.stmts = stmts
+    self.line = line
+
+  def __repr__(self):
+    return f'Stmts({self.stmts}'
+
+
 
 def WhileStmt(Stmt):
   #TODO:
