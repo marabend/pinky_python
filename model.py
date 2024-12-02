@@ -155,13 +155,13 @@ class WhileStmt(Stmt):
 
 
 class Assignment(Stmt):
-  #TODO:
+  #TODO1:
   pass
 
 class IfStmt(Stmt):
-  #TODO:
+  #TODO2:
   pass
 
 class ForStmt(Stmt):
-  #TODO:
+  #TODO3:
   pass
