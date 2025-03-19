@@ -135,4 +135,13 @@ class Interpreter:
           return (lefttype, leftval)
       return self.interpret(node.right)
 
+    elif isinstance(node, Stmts):
+      #Evaluate statements in sequence, one after the other.
+      for stmt in node.stmts:
+        self.interpret(stmt)
+
+    elif isinstance(node, PrintStmt):
+      exprtype, exprval = self.interpret(node.value)
+      print(exprval)
+
     # TODO: Interpret Stmts(), and also PrintStmt()
