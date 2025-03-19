@@ -148,16 +148,18 @@ class Parser:
 
 
   #<print_stmt> ::= "print" <expr>
-  def print_stmt(self):
-    if self.match(TOK_PRINT):
+  def print_stmt(self, end):
+    if self.match(TOK_PRINT) or self.match(TOK_PRINTLN):
       val = self.expr()
-      return PrintStmt(val, line=self.previous_token().line)
+      return PrintStmt(val,end, line=self.previous_token().line)
 
   def stmt(self):
     # Predictive parsing, where the next token predicts what is the next statement
     # How far do we lookahead? Different algorithms LL(1), LALR(1), LR(1), LR(2)
     if self.peek().token_type == TOK_PRINT:
-      return self.print_stmt()
+      return self.print_stmt(end='')
+    if self.peek().token_type == TOK_PRINTLN:
+      return self.print_stmt(end='\n')
     elif self.peek().token_type == TOK_IF:
       return self.if_stmt()
     elif self.peek().token_type == TOK_WHILE:
