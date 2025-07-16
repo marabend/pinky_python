@@ -44,6 +44,7 @@ class Parser:
   #              |  <float>
   #              |  <bool>
   #              |  <string>
+  #              |  <identifier>
   #              | '(' <expr> ')'
   def primary(self):
     if self.match(TOK_INTEGER):
@@ -62,6 +63,11 @@ class Parser:
         parse_error(f'Error: ")" expected.', self.previous_token().line)
       else:
         return Grouping(expr, line=self.previous_token().line)
+    else:
+      identifier = self.expect(TOK_IDENTIFIER)
+      return Identifier(identifier.lexeme, line=self.previous_token().line)
+      # TODO: wen can also have function calls nside expressions. We must handle that as well soon!
+
 
   # <exponent> ::= <primary> ( "^" <exponent> )*
   def exponent(self):
@@ -183,7 +189,14 @@ class Parser:
     #  return self.func_decl()
     else:
       #TODO: What do we need to handle inside this 'else' statement?
-      pass
+      # ASSIGNMENT :
+      left = self.expr()
+      if self.match(TOK_ASSIGN):
+        right = self.expr()
+        return Assignment(left, right, line=self.previous_token().line)
+      else:
+        # TODO: Handle Function call?
+        pass
 
   def stmts(self):
     stmts = []
