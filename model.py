@@ -125,17 +125,18 @@ class Grouping(Expr):
   def __repr__(self):
     return f'Grouping({self.value})'
 
+
 class Identifier(Expr):
   '''
-  Example: x,PI, _score, numLives, start_vel
+  Example: x, PI, _score, numLives, start_vel
   '''
   def __init__(self, name, line):
-
     assert isinstance(name, str), name
     self.name = name
     self.line = line
   def __repr__(self):
     return f'Identifier[{self.name}]'
+
 
 class Stmts(Node):
   '''
@@ -179,16 +180,22 @@ class IfStmt(Stmt):
 
 
 class WhileStmt(Stmt):
-  #TODO:
-  pass
+  '''
+  "while" <expr> "do" <body_stmts> "end"
+  '''
+  def __init__(self, test, body_stmts, line):
+    assert isinstance(test, Expr), test
+    assert isinstance(body_stmts, Stmts), body_stmts
+    self.test = test
+    self.body_stmts = body_stmts
+    self.line = line
+  def __repr__(self):
+    return f'WhileStmt({self.test}, {self.body_stmts})'
 
 
 class Assignment(Stmt):
   '''
   left := right
-  x := 12 + 34 * (3- y)
-  obj.name.first := 'Mario'
-  12 := x
   '''
   def __init__(self, left, right, line):
     assert isinstance(left, Expr), left
@@ -196,7 +203,6 @@ class Assignment(Stmt):
     self.left = left
     self.right = right
     self.line = line
-
   def __repr__(self):
     return f'Assignment({self.left}, {self.right})'
 
