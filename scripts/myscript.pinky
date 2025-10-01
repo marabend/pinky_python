@@ -18,6 +18,6 @@ while i <= 10 do
   i := i + 1
 end
 
-for num := 1, 10, 2 do
-    println("num = " + num)
+for num := 20+x, 5 do
+  println("num = " + num)
 end
