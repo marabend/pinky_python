@@ -17,3 +17,7 @@ while i <= 10 do
   println("i = " + i)
   i := i + 1
 end
+
+for num := 1, 10, 2 do
+    println("num = " + num)
+end
