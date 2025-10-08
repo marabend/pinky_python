@@ -19,6 +19,12 @@ class Stmt(Node):
   '''
   pass
 
+class Decl(Stmt):
+  '''
+  Declarations are statements to declare a new name (in our case, functions)
+  '''
+  pass
+
 
 class Integer(Expr):
   '''
@@ -225,3 +231,43 @@ class ForStmt(Stmt):
     self.line = line
   def __repr__(self):
     return f'ForStmts({self.ident}, {self.start}, {self.end}, {self.step}, {self.body_stmts}'
+
+class FuncDecl(Decl):
+  '''
+  "func" <name> "(" <params>? ")" <body_stmts> "end"
+  '''
+  def __init__(self, name, params, body_stmts, line):
+    assert isinstance(name, str), name
+    assert all(isinstance(param, Param) for param in params), params
+    self.name = name
+    self.params = params
+    self.body_stmts = body_stmts
+    self.line = line
+  def __repr__(self):
+    return f'FuncDecl({self.name!r}, {self.params}, {self.body_stmts}'
+
+class Param(Decl):
+  '''
+  A single function parameter
+  '''
+  def __init__(self, name, line):
+    assert isinstance(name, str), name
+    self.name = name
+    self.line = line
+  def __repr__(self):
+    return f'Param[{self.name!r}]'
+  pass
+
+# factorial(5)
+# x:= y + max(4, 8)
+class FuncCall(Expr):
+  '''
+  <func_call> ::= <name> "(" <args>? ")
+  <args> ::= <expr> ( ',' <expr> )*
+  '''
+  def __init__(self, name, args, line):
+    self.name = name
+    self.args = args
+    self.line = line
+  def __repr__(self):
+    return f'FunctionCall({self.name!r}, {self.args}'

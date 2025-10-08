@@ -200,6 +200,10 @@ class Parser:
     self.expect(TOK_END)
     return ForStmt(identifier, start, end, step, body_stmts, line=self.previous_token().line)
 
+# <func_decl> ::= "func" <name> "(" <params>? ")" <body_stmts> "end"
+def func_decl(self):
+  #TODO:
+  pass
 
   def stmt(self):
     # Predictive parsing, where the next token predicts what is the next statement
@@ -214,8 +218,8 @@ class Parser:
       return self.while_stmt()
     elif self.peek().token_type == TOK_FOR:
       return self.for_stmt()
-    #elif self.peek().token_type == TOK_FUNC:
-    #  return self.func_decl()
+    elif self.peek().token_type == TOK_FUNC:
+      return self.func_decl()
     else:
       #TODO: What do we need to handle inside this 'else' statement?
       # ASSIGNMENT :
