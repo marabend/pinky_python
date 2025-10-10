@@ -19,6 +19,7 @@ class Stmt(Node):
   '''
   pass
 
+
 class Decl(Stmt):
   '''
   Declarations are statements to declare a new name (in our case, functions)
@@ -215,7 +216,7 @@ class Assignment(Stmt):
 
 class ForStmt(Stmt):
   '''
-  "for" <identifier> ":=" <start> "," <end> ("," <step> <increment>) ? "do" <body_stmts> "end"
+  "for" <identifier> ":=" <start> "," <end> ("," <step>)? "do" <body_stmts> "end"
   '''
   def __init__(self, ident, start, end, step, body_stmts, line):
     assert isinstance(ident, Identifier), ident
@@ -230,7 +231,8 @@ class ForStmt(Stmt):
     self.body_stmts = body_stmts
     self.line = line
   def __repr__(self):
-    return f'ForStmts({self.ident}, {self.start}, {self.end}, {self.step}, {self.body_stmts}'
+    return f'ForStmt({self.ident}, {self.start}, {self.end}, {self.step}, {self.body_stmts})'
+
 
 class FuncDecl(Decl):
   '''
@@ -244,7 +246,8 @@ class FuncDecl(Decl):
     self.body_stmts = body_stmts
     self.line = line
   def __repr__(self):
-    return f'FuncDecl({self.name!r}, {self.params}, {self.body_stmts}'
+    return f'FuncDecl({self.name!r}, {self.params}, {self.body_stmts})'
+
 
 class Param(Decl):
   '''
@@ -256,13 +259,11 @@ class Param(Decl):
     self.line = line
   def __repr__(self):
     return f'Param[{self.name!r}]'
-  pass
 
-# factorial(5)
-# x:= y + max(4, 8)
+
 class FuncCall(Expr):
   '''
-  <func_call> ::= <name> "(" <args>? ")
+  <func_call>  ::=  <name> "(" <args>? ")"
   <args> ::= <expr> ( ',' <expr> )*
   '''
   def __init__(self, name, args, line):
@@ -270,4 +271,15 @@ class FuncCall(Expr):
     self.args = args
     self.line = line
   def __repr__(self):
-    return f'FunctionCall({self.name!r}, {self.args}'
+    return f'FuncCall({self.name!r}, {self.args})'
+
+
+class FuncCallStmt(Stmt):
+  '''
+  A special type of statement used to wrap FuncCall expressions
+  '''
+  def __init__(self, expr):
+    assert isinstance(expr, FuncCall), expr
+    self.expr = expr
+  def __repr__(self):
+    return f'FuncCallStmt({self.expr})'

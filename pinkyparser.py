@@ -65,9 +65,12 @@ class Parser:
         return Grouping(expr, line=self.previous_token().line)
     else:
       identifier = self.expect(TOK_IDENTIFIER)
-      return Identifier(identifier.lexeme, line=self.previous_token().line)
-      # TODO: wen can also have function calls nside expressions. We must handle that as well soon!
-
+      if self.match(TOK_LPAREN):
+        args = self.args()
+        self.expect(TOK_RPAREN)
+        return FuncCall(identifier.lexeme, args, line=self.previous_token().line)
+      else:
+        return Identifier(identifier.lexeme, line=self.previous_token().line)
 
   # <exponent> ::= <primary> ( "^" <exponent> )*
   def exponent(self):
@@ -172,7 +175,7 @@ class Parser:
     self.expect(TOK_END)
     return IfStmt(test, then_stmts, else_stmts, line=self.previous_token().line)
 
-# <while_stmt> ::= "while" <expr> "do" <stmts> "end"
+  # <while_stmt>  ::=  "while" <expr> "do" <stmts> "end"
   def while_stmt(self):
     self.expect(TOK_WHILE)
     test = self.expr()
@@ -181,7 +184,7 @@ class Parser:
     self.expect(TOK_END)
     return WhileStmt(test, body_stmts, line=self.previous_token().line)
 
-# <for_stmt> ::= "for" <idenifier> ":=" <start> "," <end> ("," <step>)? "do" <body_stmts> "end"
+  # <for_stmt>  ::=  "for" <identifier> ":=" <start> "," <end> ("," <step>)? "do" <body_stmts> "end"
   def for_stmt(self):
     self.expect(TOK_FOR)
     identifier = self.primary()
@@ -189,7 +192,6 @@ class Parser:
     start = self.expr()
     self.expect(TOK_COMMA)
     end = self.expr()
-
     if self.is_next(TOK_COMMA):
       self.advance()
       step = self.expr()
@@ -200,7 +202,16 @@ class Parser:
     self.expect(TOK_END)
     return ForStmt(identifier, start, end, step, body_stmts, line=self.previous_token().line)
 
-# <params>  ::=  <identifier> ("," <identifier> )*
+  # <args> ::= <expr> ( ',' <expr> )*
+  def args(self):
+    args = []
+    while not self.is_next(TOK_RPAREN):
+      args.append(self.expr())
+      if not self.is_next(TOK_RPAREN):
+        self.expect(TOK_COMMA)
+    return args
+
+  # <params>  ::=  <identifier> ("," <identifier> )*
   def params(self):
     params = []
     while not self.is_next(TOK_RPAREN):
@@ -210,8 +221,7 @@ class Parser:
         self.expect(TOK_COMMA)
     return params
 
-
-# <func_decl> ::= "func" <name> "(" <params>? ")" <body_stmts> "end"
+  # <func_decl>  ::=  "func" <name> "(" <params>? ")" <body_stmts> "end"
   def func_decl(self):
     self.expect(TOK_FUNC)
     name = self.expect(TOK_IDENTIFIER)
@@ -238,15 +248,14 @@ class Parser:
     elif self.peek().token_type == TOK_FUNC:
       return self.func_decl()
     else:
-      #TODO: What do we need to handle inside this 'else' statement?
-      # ASSIGNMENT :
       left = self.expr()
       if self.match(TOK_ASSIGN):
+        # Handle assignment --> <assign> ::= <identifier> ":=" <expr>
         right = self.expr()
         return Assignment(left, right, line=self.previous_token().line)
       else:
-        # TODO: Handle Function call?
-        pass
+        # Handle function call statement (special type of statement that wraps a FuncCall expression)
+        return FuncCallStmt(left)
 
   def stmts(self):
     stmts = []
